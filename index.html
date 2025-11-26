@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>给你的爱心祝福</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: white;
+            overflow: hidden;
+            font-family: "Microsoft YaHei", "KaiTi", sans-serif;
+        }
+        #heartContainer {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        .blessing {
+            position: absolute;
+            width: 140px; /* 固定宽度 */
+            height: 70px; /* 固定高度 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+            border-radius: 15px;
+            background: lightpink;
+            font-weight: bold;
+            font-size: 14px;
+            text-align: center;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            color: #000000;
+            /* 确保文字在固定尺寸内正确显示 */
+            line-height: 1.2;
+            padding: 5px;
+            box-sizing: border-box;
+            word-break: break-word;
+            overflow: hidden;
+        }
+        .final-blessing {
+            background: gold !important;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div id="heartContainer"></div>
+
+    <script>
+        const tips = [
+            "梦想成真", "祝你好运", "休息一下", "保持积极心态",
+            "一切痛苦都是暂时的", "保持冷静，下次再见", "妳的笑容是我的阳光",
+            "有妳的每一天都是美好", "妳是我最珍贵的礼物", "愿我们的爱永恒不变",
+            "妳的快乐就是我的幸福", "我会永远守护在妳身边", "妳是我生命中的奇迹",
+            "感谢上天让我遇见妳", "我们的未来充满希望", "妳是我前进的动力",
+            "爱妳是我最美的决定", "愿妳每天都开心快乐", "有妳的世界如此美好",
+            "我会永远珍惜我们的爱", "妳是我心中的唯一"
+        ];
+
+        const bgColors = [
+            'lightpink', 'mistyrose', 'lavenderblush', 'pink', 'hotpink',
+            'salmon', 'plum', 'violet', 'orchid', 'thistle'
+        ];
+
+        function generateHeartPoints(numPoints = 200) {
+            const points = [];
+            for (let i = 0; i < numPoints; i++) {
+                const t = (i / numPoints) * 2 * Math.PI;
+                const x = 16 * Math.pow(Math.sin(t), 3);
+                const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+                points.push({x, y});
+            }
+            return points;
+        }
+
+        function createBlessingElement(x, y, isLast = false) {
+            const container = document.getElementById('heartContainer');
+            const blessing = document.createElement('div');
+            blessing.className = isLast ? 'blessing final-blessing' : 'blessing';
+
+            // 设置祝福文本和背景色
+            if (isLast) {
+                blessing.textContent = "戴嘉茜妳是最棒的！";
+                blessing.style.background = 'gold';
+            } else {
+                blessing.textContent = tips[Math.floor(Math.random() * tips.length)];
+                blessing.style.background = bgColors[Math.floor(Math.random() * bgColors.length)];
+            }
+
+            // 计算位置 - 调整缩放比例和垂直偏移
+            const scale = Math.min(window.innerWidth, window.innerHeight) / 40; // 调整缩放比例
+            const verticalOffset = -50; // 向上偏移量，使爱心整体上移
+
+            // 计算位置
+            const posX = window.innerWidth / 2 + x * scale - 70; // 减去窗口宽度的一半
+            const posY = window.innerHeight / 2 + y * scale - 35 + verticalOffset; // 减去窗口高度的一半并加上垂直偏移
+
+            blessing.style.left = `${posX}px`;
+            blessing.style.top = `${posY}px`;
+
+            container.appendChild(blessing);
+
+            // 触发显示动画
+            setTimeout(() => {
+                blessing.style.opacity = 1;
+            }, 10);
+
+            return blessing;
+        }
+
+        function initHeart() {
+            const heartPoints = generateHeartPoints(200);
+            const totalCreationTime = 30000;
+            const creationDelay = totalCreationTime / heartPoints.length;
+
+            heartPoints.forEach((point, index) => {
+                setTimeout(() => {
+                    const isLast = (index === heartPoints.length - 1);
+                    createBlessingElement(point.x, point.y, isLast);
+                }, index * creationDelay);
+            });
+        }
+
+        // 页面加载完成后启动
+        window.onload = initHeart;
+
+        // 窗口大小改变时重新调整位置
+        window.addEventListener('resize', function() {
+            const container = document.getElementById('heartContainer');
+            container.innerHTML = ''; // 清空容器
+            initHeart(); // 重新初始化
+        });
+    </script>
+</body>
+</html>
